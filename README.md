@@ -1,6 +1,6 @@
 # Tsinelas Arena
 
-A four-seat 3D browser game: squash an air-sensing cockroach, identify hidden bots, and take your lag excuse to Slipper Court.
+A four-seat cooperative 3D browser game: work together to squash an air-sensing cockroach, then guess which teammates were bots. Slipper Court is an optional-to-open evidence feature for controlled lag complaints.
 
 PandesalDEV Wackathon 2026: **Useless Problems. Serious Engineering.**
 
@@ -23,7 +23,7 @@ Solo, agent-assisted development. We use observable integration gates rather tha
 
 ## Product boundaries
 
-One room, four fixed throwing stations, desktop browsers, one cockroach. One or two seats are hidden bots, fixed during each bout. One shared deterministic simulation powers playback, bot planning, bounded rollback and Court experiments. RabbitMQ stays outside the gameplay tick.
+One team, one room, four fixed throwing stations, desktop browsers, one cockroach. Humans and bots help the same team; there is no sabotage or elimination. Every finalized squash adds to the shared team score. One or two seats are hidden bots, fixed during each bout. One shared deterministic simulation powers playback, bot planning, bounded rollback and Court experiments. RabbitMQ stays outside the gameplay tick.
 
 Never cut: determinism, authoritative outcomes, the air-sensing cockroach, bots as clients assigned through RabbitMQ, bot spotting, truthful replays, the offline demo and the broker boundary.
 

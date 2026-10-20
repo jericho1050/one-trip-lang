@@ -56,7 +56,7 @@ Mode: AFK. Milestone: M1 Reproducible shared throw. Stories: 5, 6, 16. Dependenc
 
 Connect one browser to authority, validate inputs, display provisional then finalized hits, and persist an event/replay batch through the asynchronous worker boundary. Add minimal outbox scaffolding without waiting inside ticks.
 
-Acceptance: Given one connected player, when a legal throw hits and leaves the rollback window, then one finalized hit point and a matching replay event survive a results-service restart without duplicate award.
+Acceptance: Given one connected player, when a legal throw hits and leaves the rollback window, then one finalized shared team point and a matching replay event survive a results-service restart without duplicate award.
 
 Fallback: A plain HUD and one local SQLite-backed result process are sufficient.
 
@@ -70,7 +70,7 @@ Mode: AFK. Milestone: M1 Reproducible shared throw. Stories: 1, 2, 5. Dependenci
 
 Implement room codes, seats, readiness and snapshots so two clients observe the same legal inputs, target and finalized outcome. Complete the direct WebSocket path.
 
-Acceptance: Given two browsers in one room, when either launches a legal throw, then both show the same finalized hit owner, score and tick.
+Acceptance: Given two browsers in one room, when either launches a legal throw, then both show the same finalized throw attribution, shared team score and tick.
 
 Fallback: Single active room on one server; no matchmaking.
 
@@ -156,11 +156,11 @@ Fallback: Use simple delays and smoothing; no Fitts-law fitting or behavioral le
 
 Mode: AFK. Milestone: M2 Complete mixed bout. Stories: 9, 13, 14. Dependencies: S6, S10, S11.
 
-Deliver timed bouts, hidden one-or-two-bot composition, bot/human/abstain ballots, freeze and reveal, and separate hit/spotting awards. Ensure votes and role data stay private until closure.
+Deliver timed bouts, hidden one-or-two-bot composition, bot/human/abstain ballots, freeze and reveal, and a shared team squash total and separate personal spotting results. Ensure votes and role data stay private until closure.
 
-Acceptance: Given a complete four-seat bout with a repeated ballot and a late edit, when the ballot closes, then the repeat has one effect, the late edit is rejected, identities reveal only after freeze, and displayed hit/spotting totals match the scoring rules.
+Acceptance: Given a complete four-seat bout with a repeated ballot and a late edit, when the ballot closes, then the repeat has one effect, the late edit is rejected, identities reveal only after freeze, and displayed shared team and personal spotting totals match the scoring rules.
 
-Fallback: One bout per match and shared awards on ties; no confidence scoring.
+Fallback: One bout per match, no individual hit ranking and shared spotting awards on ties; no confidence scoring.
 
 ## T6 Recoverable results and verified playback
 

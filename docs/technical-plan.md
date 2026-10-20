@@ -4,7 +4,7 @@ Planning baseline, not an implementation report. All numerical budgets below are
 
 ## Architecture and ownership
 
-Browser rendering and HUD -> direct WebSocket -> authoritative game server. Bot workers also connect through that public gameplay protocol. The server alone owns hit, phase and score decisions.
+Browser rendering and HUD -> direct WebSocket -> authoritative game server. Bot workers also connect through that public gameplay protocol. The server alone owns hit, phase and score decisions. Every finalized squash increments one shared team score; seat attribution is evidence, not individual hit ranking. Humans and bots cooperate; bots choose legal throws to help squash the target, with no sabotage behavior or separate victory condition.
 
 Outside the tick: bot seat requests -> RabbitMQ -> workers; finalized facts -> asynchronous outbox publisher -> RabbitMQ -> results/replay and telemetry consumers. No broker, database or remote model wait can appear in a simulation step.
 
@@ -55,6 +55,8 @@ Initial spool cap 64 MiB per active match; validate with measured event sizes. A
 Single-node RabbitMQ with durable queues and persistent volume; no HA claim. One-node quorum queues do not make the host failure-tolerant. Independent consumers for results/replay and telemetry; no separate lobby database service unless needed.
 
 ## Replay format and Slipper Court
+
+Court is a separate evidence view that players may open after a miss, not a prerequisite for cooperative play or the bot-guessing reveal. It remains a planned core demonstration feature. The complaint button means "Did our deliberately added network delay cause this miss?"; it does not accuse a teammate or bot.
 
 Replay envelope: format/simulation/physics version, match settings, initial snapshot, ordered accepted inputs, recorded cockroach decisions, seed data for authorized post-bout analysis, periodic hashes, finalized events and injected-delay metadata. Keep participant replay access restricted until reveal. Compress only after correctness. Do not promise the handoff's 200 KB size.
 

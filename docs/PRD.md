@@ -4,13 +4,13 @@ Status: initial planning baseline, synthesized from approved recommendations. No
 
 ## Problem Statement
 
-At 2 a.m. there is an ipis in the sala. Everyone throws slippers, misses and blames lag. Suspiciously competent opponents may be bots. The intentionally useless problem is settling who can hit the cockroach, who is a machine and whose lag excuse survives evidence.
+At 2 a.m. there is an ipis in the sala. Everyone throws slippers, misses and blames lag. Some helpful teammates are secretly bots. The intentionally useless problem is squashing the cockroach together, identifying which teammates were machines and testing a controlled lag excuse.
 
 The entry must communicate a ridiculous premise through serious, demonstrable engineering. The supplied judging weights are technical creativity 30%, wackiness 25%, surprise 20%, execution 15% and presentation 10%. Success means a coherent playable demonstration, not a large feature count. Selection and prizes cannot be predicted from this plan.
 
 ## Solution
 
-A four-seat desktop 3D browser game in one Filipino sala. Humans and hidden bots throw at a cockroach whose escape behavior depends on a simplified air field. A spotting ballot follows the bout. Slipper Court compares recorded play with a clearly defined controlled-delay experiment.
+A four-seat cooperative desktop 3D browser game in one Filipino sala. All humans and hidden bots are teammates helping to squash a cockroach whose escape behavior depends on a simplified air field. A spotting ballot follows the bout. Bots do not sabotage play, and the reveal does not eliminate anyone. Slipper Court compares recorded play with a clearly defined controlled-delay experiment.
 
 Priority order: satisfying shared throwing; visible air sensing; hidden bots and spotting; truthful Court; optional LLM dialogue. Use library rendering and collision support, sourced assets and one shared simulation. Keep the user flow to join, throw, vote, reveal and inspect Court.
 
@@ -20,8 +20,8 @@ Priority order: satisfying shared throwing; visible air sensing; hidden bots and
 - Four seats; random one or two bots, fixed during the bout. Two-human/two-bot composition is a rehearsed operator fixture, not forced in normal play.
 - Joining humans fill available human seats; the host can start only when all seats are occupied. Normal play therefore needs two or three humans. A local demo harness can supply two human browser sessions.
 - Fixed throwing stations. One active slipper per seat. Direction, power and spin are bounded and quantized; auto-return after rest or a flight timeout; initial cooldown one second after return.
-- One hit point for a finalized squash; reset the cockroach at a deterministic legal position after a short visible reset. Only the earliest collision wins; exact ties break by stable seat ID.
-- Spotting: bot/human/abstain for each other seat. Correct +1, incorrect -1, abstain or missing 0. Report hit and spotting awards separately; ties share the award.
+- One shared team point per finalized squash, regardless of who hits. Reset the cockroach at a deterministic legal position after a short visible reset. Record the earliest collision for replay attribution, with stable seat ID resolving exact ties; attribution is not a competitive award.
+- Spotting: bot/human/abstain for each teammate. Correct +1, incorrect -1, abstain or missing 0. Show the shared team total and separate personal spotting points. Do not rank teammates by hits; spotting ties may share an award.
 - No accounts, payments, global leaderboard or personal profile collection. Room codes and session-scoped reconnect tokens suffice.
 
 ## User Stories
@@ -30,7 +30,7 @@ Priority order: satisfying shared throwing; visible air sensing; hidden bots and
 2. As a player, I want clear seat and ready states so I know when play starts.
 3. As a player, I want readable aim, power and spin controls so I understand each throw.
 4. As a player, I want immediate visual feedback so throwing feels responsive.
-5. As a player, I want one authoritative hit result so every participant agrees who scored.
+5. As a player, I want one authoritative hit result so every participant agrees on the shared team score.
 6. As a player, I want my slipper returned automatically so I can keep playing.
 7. As a player, I want the cockroach to respond to the air disturbance so orientation creates a tactic.
 8. As a spectator, I want an air-sensing overlay so I understand an escape.
@@ -38,8 +38,8 @@ Priority order: satisfying shared throwing; visible air sensing; hidden bots and
 10. As a player, I want bots bound to my information and action limits so the contest is fair.
 11. As an operator, I want measured bot planning budgets so I can demonstrate computational difficulty.
 12. As a player, I want bots with bounded reaction and aim variation so their identity is not immediately obvious.
-13. As a player, I want to classify opponents or abstain before reveal so guesses can be scored fairly.
-14. As a player, I want separate hit and spotting awards so both skills are visible.
+13. As a player, I want to classify teammates or abstain before reveal so guesses can be scored fairly.
+14. As a player, I want a shared squash total and separate personal spotting results so cooperation and deduction are both visible.
 15. As a disconnected human, I want a brief reconnect opportunity without being silently replaced by a bot.
 16. As an operator, I want replay verification tied to a simulation version so claims can be checked.
 17. As a player, I want a controlled lag complaint replayed with its assumptions visible so the verdict is honest.
