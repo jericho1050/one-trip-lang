@@ -12,6 +12,7 @@ Solo, agent-assisted development. We use observable integration gates rather tha
 
 ## Start here
 
+- [Delivery epic #2](https://github.com/jericho1050/tsinelas-arena/issues/2) and [dated milestones](https://github.com/jericho1050/tsinelas-arena/milestones)
 - [PRD and business rationale](docs/PRD.md)
 - [Technical plan](docs/technical-plan.md)
 - [Asset plan and inventory](docs/assets.md)
@@ -27,3 +28,9 @@ One room, four fixed throwing stations, desktop browsers, one cockroach. One or 
 Never cut: determinism, authoritative outcomes, the air-sensing cockroach, bots as clients assigned through RabbitMQ, bot spotting, truthful replays, the offline demo and the broker boundary.
 
 Use GitHub Issues for work tracking. Complete tasks through linked pull requests with evidence for their acceptance test. No implementation before November 4 unless organizer permission is recorded.
+
+## Next actions
+
+Start with the planning task's rules/status record and licensed asset shortlist. These are the only currently unblocked planning slices. At the permitted development start, the first implementation slice is one playable graybox throw. Do not begin with infrastructure expansion or polished art.
+
+Task checklists show delivery progress; native sub-issue links show hierarchy; native blocked-by relationships show ordering. Labels distinguish agent-ready work from work requiring a human, but all initial issues still require triage.
