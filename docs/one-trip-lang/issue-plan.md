@@ -1,12 +1,10 @@
 # One Trip Lang - Epic and Implementation Breakdown
 
-This is the readable source plan. Each leaf has one observable acceptance scenario. Mode AFK means specified work; HITL requires human review or action. Neither authorizes early competition implementation. See the published tracking index for real issue links.
+Current baseline: ADR 0008. Each leaf has one observable acceptance scenario. AFK is specified work; HITL needs human action/review. Production start follows the recorded November 4/eligibility gate.
 
 ## Epic
 
-Deliver a two-human competitive 3D grocery race with fair rules, verified replay, bounded background Cargo Lab, repeatable deployment and an offline demo by the November 27 freeze / November 29 presentation.
-
-Completion: all core child acceptance evidence and the release/demo gates pass. Stretch work cannot block this epic.
+Deliver the approved shared-track collision race, authoritative private rooms, whole-match replay, bounded Cargo Lab, licensed assets, reproducible infrastructure and offline release. Two players core, four stretch. All core evidence gates must pass; planning completion is not implementation completion.
 
 ## T0: Proposal, rules and asset readiness
 
@@ -16,7 +14,7 @@ Milestone: OTL M0 - Proposal and product baseline. Make the new competitive prod
 
 HITL | core | Due 2026-10-21 | Blocked by: none
 
-Use the official proposal headings, keep team identity placeholders where unknown, and describe the current game and earned engineering. Record submission separately; do not submit without instruction.
+Use the official proposal headings, keep team identity placeholders where unknown, and describe the current game and earned engineering. Record submission separately; do not submit without instruction. Include shared-track ramming, individual POVs and whole-match replay. Use ADR 0008 as the current scope.
 
 Acceptance: Given the current PRD, the owner can review a concise official-template proposal describing competitive trolleys, cargo points, deadline, replay and background analysis, with submission status explicitly recorded.
 
@@ -40,26 +38,26 @@ Implementation steps:
 
 ### P3: Select the minimum licensed grocery and environment assets
 
-HITL | core | Due 2026-10-21 | Blocked by: none
+AFK | core | Due 2026-11-07 | Blocked by: none
 
-Choose enough assets for one trolley, six groceries, one route/house and minimal cues; validate rights before import.
+Inspect the verified Kenney Food Kit, City Kit Suburban and Impact Sounds shortlist in docs/one-trip-lang/assets.md. Select only the minimum needed files; use original primitives for missing trolley/packaging. Produce source/license/checksum manifest and a readable six-grocery reference sheet. No purchase required.
 
 Acceptance: Given the asset shortlist, every selected file has a source URL, license and required attribution, and a small reference sheet shows the six groceries can be distinguished.
 
 Implementation steps:
-- Shortlist reusable low-poly packs.
-- Record per-pack rights and attribution.
-- Choose simple collider proxies and a minimal visual direction.
+- Inspect actual pack files; do not assume the shortlist contains every grocery.
+- Record per-file source, author, license, checksum, modifications and attribution.
+- Use simple independent collider proxies and document primitive fallbacks.
 
 ## T1: Complete a fair local grocery race
 
-Milestone: OTL M1 - Playable local race. Deliver the complete two-human local loop from ready through points, deadline, result and rematch.
+Milestone: OTL M1 - Playable local race. Deliver the two-human local collision race with visible wobble, fair cargo losses, deadline, result and rematch.
 
 ### S1: Drive one trolley through the production course
 
 AFK | core | Due 2026-11-07 | Blocked by: P2
 
-Create the pinned production simulation and browser view with acceleration, braking/reverse, one bump, ordered corner gates and the finish. Reuse libraries; isolate authoritative stepping from rendering.
+Create the pinned production simulation and browser view with acceleration, braking/reverse, one bump, ordered corner gates and the finish. Reuse libraries; isolate authoritative stepping from rendering. Use a dynamic chassis with arcade drive, vertical support and damped pitch/roll; keep physical body state separate from render smoothing.
 
 Acceptance: Given a fresh local run, a recorded control sequence drives the trolley through both gates to the finish, while the same sequence at different render rates reaches the same authoritative tick/state.
 
@@ -81,9 +79,22 @@ Implementation steps:
 - Implement irreversible loss and finish/deadline transitions.
 - Show the ledger, timer and result with rule fixtures.
 
-### S3: Play and rematch with independent local controls
+### C1: Ram a rival with physical wobble and fair cargo losses
 
 AFK | core | Due 2026-11-07 | Blocked by: S2
+
+Port the approved feel to Rapier: dynamic chassis, low bumper, physical pitch/roll with damped recovery and independent cargo. Contacts affect both loads; cargo ownership never changes. Clear finished/DNF racer bodies. No cosmetic wobble substitute or arbitrary contact penalty.
+
+Acceptance: Given a versioned test course and control fixture suite, idle for 45 seconds retains 100 points, careful driving finishes with at least 80, a side-swipe visibly tilts cargo (initial target 8 degrees), a hard crash spills without pass-through, each lost item penalizes its original owner once, and a cleared finisher cannot block the remaining racer.
+
+Implementation steps:
+- Use a shared world and deterministic body creation/removal ordering.
+- Tune chassis support, pitch/roll damping, cargo proportions and sleep/wake through the idle/careful/impact scenarios.
+- Show impact/loss feedback in the playable browser and capture a short replay plus assertions.
+
+### S3: Play and rematch with independent local controls
+
+AFK | core | Due 2026-11-07 | Blocked by: C1
 
 Add split-screen simultaneous WASD/arrows, identical load presets, common countdown, global local pause and clean rematch.
 
@@ -91,46 +102,59 @@ Acceptance: Given two local players holding different controls concurrently, bot
 
 Implementation steps:
 - Wire two input streams without shared bindings.
-- Render independent cameras and readable rival ghosts.
-- Reset all state and handle focus-loss pause.
+- Render independent cameras and readable colliding rivals.
+- Reset all state and handle focus-loss pause; clear finished/DNF bodies from collisions.
 
 ## T2: Race a friend in an authoritative online room
 
-Milestone: OTL M2 - Two-player online race. Deliver a two-browser room with server-owned outcomes and understandable reconnect behavior.
+Milestone: OTL M2 - Two-player online race. Deliver authoritative online collision races with individual POVs, reconnects and isolated private rooms on one bounded server.
 
 ### S4: Join and finish a real two-browser race
 
-AFK | core | Due 2026-11-12 | Blocked by: S2
+AFK | core | Due 2026-11-12 | Blocked by: S3
 
-Implement room code, session ownership, ready/countdown, direct WebSocket controls, authoritative snapshots and consistent result/rematch.
+Use Colyseus room/seat lifecycle and direct WebSocket transport with a versioned race adapter. Implement room code, ownership, ready/countdown, authoritative collision snapshots, individual online POVs and result/rematch.
 
-Acceptance: Given two independent browsers joining one room, they ready, race and rematch with identical authoritative spill events, deadline tick and final ranking; a client-sent score cannot change the result.
+Acceptance: Given two independent browsers in one room, they ready, collide, spill cargo and rematch with identical authoritative loss events, deadline and ranking; a third join and a client-sent score are rejected.
 
 Implementation steps:
-- Create a versioned validated protocol and room lifecycle.
-- Advance the shared simulation only on the authority.
-- Display lobby, race, results and rematch in both browsers.
+- Pin Colyseus and define a validated room adapter around the shared simulation.
+- Keep one world per room and enforce seat ownership, new match IDs and input epochs.
+- Show the complete lobby-to-rematch flow and each player’s own follow camera.
+
+### R1: Run isolated private matches on one bounded server
+
+AFK | core | Due 2026-11-12 | Blocked by: S4
+
+Host separate Colyseus rooms with separate physics worlds, clocks, seats, input epochs and result/replay records. Add configurable admission limit, empty-room TTL and clear busy/full responses. No Redis, sharding or per-match pod controller.
+
+Acceptance: Given four browsers in two private two-seat rooms, a collision, rematch or disposal in room A cannot change room B; cross-room tokens and a third seat are rejected, and attempting an additional room at the configured cap returns busy while both active races continue.
+
+Implementation steps:
+- Scope all mutable simulation/session data to the room and each rematch to a new match ID.
+- Exercise two rooms in staging and dispose idle rooms without touching another world.
+- Expose cap/active-room counts and reject excess admissions; public cap stays one until load evidence permits more.
 
 ### S5: Keep racing responsive under delay and hostile input
 
 AFK | core | Due 2026-11-12 | Blocked by: S4
 
-Predict/reconcile local trolley and cargo; interpolate rivals; validate packet size/rate, ownership, sequence and input expiry. No authoritative rollback.
+Predict/reconcile the small full interacting world, including rivals and cargo, from complete authoritative snapshots. Bound remote-input extrapolation and local input history; validate size/rate, seat/room ownership, sequence and expiry. No server rollback.
 
-Acceptance: Given 150 ms RTT with 30 ms jitter plus duplicated, stale and forged-seat inputs, both browsers converge on the same result, rejected input has no unauthorized effect, and a silent client cannot leave throttle stuck indefinitely.
+Acceptance: Given a head-on collision at 150 ms RTT and 30 ms jitter plus duplicate, stale and forged-seat inputs, both browsers converge on the same authoritative cargo losses and ranking, no unauthorized input changes another seat, and silence cannot leave throttle stuck.
 
 Implementation steps:
-- Bound input history and reconnect epoch.
-- Reapply unacknowledged local controls after authoritative restore.
-- Record latency and correction evidence on the reference build.
+- Restore complete world snapshots and reapply pending local controls with bounded remote-control extrapolation.
+- Keep provisional motion separate from server-confirmed loss/finish events.
+- Record collision correction magnitude, tick timings and abuse rejection on the reference build.
 
 ### S6: Reconnect a seat without pausing the race
 
 AFK | core | Due 2026-11-12 | Blocked by: S4
 
-Neutralize stale input on disconnect, reclaim the same seat with its token within grace, and mark DNF after grace while rivals keep racing.
+Neutralize stale input on disconnect, reclaim the same seat with its token within grace, and mark DNF after grace while rivals keep racing. Remove expired DNF trolley/cargo from the collision world; preserve its immutable result.
 
-Acceptance: Given a dropped connection, resuming within 10 seconds restores the same seat and current clock; a second drop beyond grace produces DNF without stopping the rival or allowing another token to steal the seat.
+Acceptance: Given a dropped connection, resuming within 10 seconds restores the same seat and current clock; a second drop beyond grace produces DNF and clears that racer’s collision bodies without stopping the rival or allowing another token to steal the seat.
 
 Implementation steps:
 - Implement bounded grace and seat token validation.
@@ -143,16 +167,16 @@ Milestone: OTL M3 - Evidence and useful analysis. Show truthful replay and bound
 
 ### S7: Verify a recorded race against the shared simulation
 
-AFK | core | Due 2026-11-07 | Blocked by: S2
+AFK | core | Due 2026-11-07 | Blocked by: C1
 
 Record versioned initial state, admitted controls, irreversible facts and canonical hashes; restore and verify with a readable replay view.
 
-Acceptance: Given the pinned 10,000-tick fixture, Node and supported Chromium replay matching state hashes and score events; changing an input or using an unsupported version yields a visible verification failure.
+Acceptance: Given a pinned 10,000-tick whole-match fixture containing ramming, spills and finisher clearing, Node and supported Chromium replay identical state hashes and score events; altered input or unsupported versions produce a visible verification failure.
 
 Implementation steps:
-- Define replay/version envelope and canonical state.
-- Implement baseline verification and viewer seeking.
-- Capture runtime/build evidence for determinism.
+- Record complete world/controller state, admitted controls for all racers and ordered outcome/removal events.
+- Implement version-checked baseline verification and replay seeking.
+- Capture runtime/build evidence; do not reuse cannon-es results as Rapier proof.
 
 ### S8: Publish durable results and replay work outside the tick
 
@@ -163,7 +187,7 @@ Create the bounded spool/outbox and RabbitMQ publisher with separate results/rep
 Acceptance: Given a 60-second broker interruption while a race completes, play continues and shows pending persistence/publication accurately; after recovery exactly one effective result and replay record exists for the match.
 
 Implementation steps:
-- Implement asynchronous writer and bounded backpressure states.
+- Use a dedicated spool writer thread/process, bounded handoff and honest pending/backpressure states.
 - Use persistent messages, publisher confirms and post-commit acknowledgements.
 - Exercise broker outage, duplicate delivery and disk-full admission refusal.
 
@@ -171,14 +195,14 @@ Implementation steps:
 
 AFK | core | Due 2026-11-18 | Blocked by: S7, S8
 
-From a verified replay, queue a maximum 16-profile brake search around one spill and show factual versus best tested candidate with assumptions and limits.
+From a verified whole-match replay, queue at most 16 brake variants around one spill. Resimulate all colliding bodies while holding opponents’ recorded controls fixed, and label that assumption. Continue a candidate to deadline before claiming a better finish.
 
-Acceptance: Given one known improvable replay and one non-improvable fixture, the UI shows a verified factual baseline, the exact modified controls, and either a valid tested improvement or no improvement; official race points remain unchanged.
+Acceptance: Given a collision replay with a known improvable variant and a non-improvable fixture, the UI verifies the factual baseline and shows changed controls plus the fixed-opponent-input assumption, then reports a verified tested outcome or no improvement without changing official race points.
 
 Implementation steps:
-- Define immutable analysis key, input profiles and budgets.
-- Reuse the same simulation with bounded horizon/timeout.
-- Continue a candidate to deadline before claiming an improved finish.
+- Define an immutable analysis key and bounded profile/horizon/timeout budgets.
+- Restore and resimulate the entire world, including rival cargo and body removals.
+- Label hypothetical opponent behavior and verify full completion before claiming a better finish.
 
 ### S10: Recover analysis jobs without duplicate effects
 
@@ -206,22 +230,22 @@ Replace essential grayboxes with sourced low-poly grocery/road/trolley visuals, 
 Acceptance: Given a desktop browser on the agreed minimum viewport, a new player can identify all six grocery types, their own trolley, the next gate, a named score loss and final result without clipped HUD; mute and credits work.
 
 Implementation steps:
-- Import optimized assets and license manifest.
-- Add restrained cues for start, loss and finish.
-- Check camera, overlap ghosts and result readability.
+- Import selected optimized assets with per-file manifest and primitive fallbacks.
+- Add start, impact, loss and finish cues with mute and credits.
+- Check both colliding carts, individual cameras, named penalties and result readability.
 
 ### S12: Deploy one reproducible HTTPS race environment
 
 AFK | core | Due 2026-11-23 | Blocked by: S4, S8, P2
 
-Define OpenTofu/cloud-init and K3s workloads for one VPS, with game/worker boundaries, persistent storage, restricted management and HTTPS/WSS. Actual provider apply requires resolved access/budget.
+Implement docs/one-trip-lang/infrastructure.md: offered VPS or paid Lightsail fallback, OpenTofu/cloud-init, one-host K3s, HTTPS/WSS, persistent storage, restricted management, CI images and off-host backups. Account/region/DNS/credentials must be available before apply.
 
-Acceptance: Given a clean authorized host or disposable equivalent, documented provisioning and deployment bring up a two-browser HTTPS race and background result processing from pinned definitions without undocumented manual changes.
+Acceptance: Given a clean authorized host, pinned provisioning/deployment creates a working two-browser collision race and background result pipeline, and a backup restores a committed result/replay into a replacement test environment using the documented runbook.
 
 Implementation steps:
-- Document provided-host versus provider-managed resources.
-- Declare images, volumes, probes, secrets references and ingress.
-- Record clean install, teardown and state-handling steps.
+- Resolve host/account/region/DNS, budget alerts and provided-host versus managed-resource boundaries.
+- Build immutable images; declare ingress, probes, secrets references, resource caps and persistent volumes.
+- Run clean install, room drain/rollback, backup/restore and cost-aware teardown; record evidence.
 
 ### S13: Protect live race resources while workers restart or scale
 
@@ -255,16 +279,16 @@ Implementation steps:
 
 ### S15: Measure online quality and abuse boundaries
 
-AFK | core | Due 2026-11-27 | Blocked by: S5, S6, S10, S11, S13
+AFK | core | Due 2026-11-27 | Blocked by: S5, S6, S10, S11, S13, R1
 
 Run the named-hardware two-player reference load with analysis active and network faults; test malformed input, seat isolation, deadline authority and resource bounds.
 
-Acceptance: Given the release candidate on recorded hardware, p95 authority step work stays below 16.7 ms and client frame rate remains at least 30 FPS during the reference two-player/analysis workload, while network/abuse fixtures preserve identical final rankings.
+Acceptance: Given the release candidate running two independent two-player rooms with analysis active for 15 minutes on recorded hardware, p95 aggregate authority step work stays below 16.7 ms without a growing backlog and clients reach 30 FPS, while collision/network/abuse fixtures preserve correct separate results; the public cap never exceeds measured capacity.
 
 Implementation steps:
-- Record build, hardware, browser and workload.
-- Measure tick/frame timings separately and exercise network faults.
-- Attach security/rate-limit/resource evidence and unresolved limitations.
+- Record build, hardware, browser, room count and worker workload.
+- Measure aggregate tick work, event-loop delay, correction spikes, frame rate and queue/disk bounds.
+- Reject excess admissions and cross-room messages; publish the supported cap and any remaining limitations.
 
 ### S16: Package a fully offline two-player fallback
 
@@ -313,7 +337,7 @@ Implementation steps:
 
 AFK | stretch | Due 2026-11-27 | Blocked by: S15, S17
 
-Only if core release gates are already met, extend room limits/HUD to four humans using identical rules and no rival collisions. Re-run release evidence for any inclusion.
+Only if core release gates are already met, extend room limits/HUD to four humans using identical rules and shared-track rival collisions. Re-run release evidence for any inclusion.
 
 Acceptance: Given four independent browsers, all players ready, race and rematch with matching results and the same measured performance targets; otherwise the shipped limit remains two and this optional issue stays open.
 

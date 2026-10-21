@@ -1,6 +1,6 @@
 # Agent instructions
 
-Read CONTEXT.md, docs/one-trip-lang/PRD.md, docs/one-trip-lang/technical-plan.md and ADR 0007 before implementation. The One Trip Lang plan supersedes Tsinelas-specific requirements. Historical docs/PRD.md and ADRs 0001-0006 are retained for context. These documents describe planned production behavior, not existing production code.
+Read CONTEXT.md, docs/one-trip-lang/PRD.md, docs/one-trip-lang/technical-plan.md and ADRs 0007-0008 before implementation. The One Trip Lang plan supersedes Tsinelas-specific requirements. Historical docs/PRD.md and ADRs 0001-0006 are retained for context. These documents describe planned production behavior, not existing production code.
 
 ## Working rules
 
@@ -9,7 +9,7 @@ Read CONTEXT.md, docs/one-trip-lang/PRD.md, docs/one-trip-lang/technical-plan.md
 - One focused issue per branch/PR. Respect declared dependencies; check their actual acceptance evidence, not just their closed status.
 - Use the shared simulation for every authoritative outcome. No duplicate physics implementation inside React components or analysis code.
 - Never block a simulation tick on RabbitMQ, a database, remote AI or HTTP. Resource limits and recovery must be explicit.
-- The server owns race clock, item-loss transitions, finish validation and ranking. Clients submit controls, never their own outcomes. Rival trolley/cargo collisions are disabled in v1.
+- The server owns race clock, item-loss transitions, finish validation and ranking. Clients submit controls, never their own outcomes. Rival trolley/cargo collisions are core. Preserve physical wobble, immutable cargo ownership, separate room worlds and collision-aware replay under ADR 0008.
 - Use available libraries for rendering, collision, storage and transport. Our custom engineering belongs in simulation rules, networking integration, Cargo Lab and replay evidence.
 - Test external behavior. Require replay, determinism, networking and failure-recovery evidence; do not add tests that simply mirror presentation code.
 - Work on isolated branches. Do not merge your own changes or publish externally unless the current task authorizes it. Documentation changes and issue creation are already authorized for initial planning.

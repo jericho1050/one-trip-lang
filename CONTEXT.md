@@ -1,6 +1,6 @@
 # One Trip Lang domain context
 
-Current product: competitive grocery trolley racing. See ADR 0007 and docs/one-trip-lang/. Historical Tsinelas vocabulary is superseded for active work.
+Current product: competitive grocery trolley racing. See ADRs 0007-0008 and docs/one-trip-lang/. Historical Tsinelas vocabulary is superseded for active work.
 
 - **Race:** one shared countdown, active clock, finish/deadline resolution and results.
 - **Player / seat:** one human and one independent trolley. Two-player online is core; four is stretch.
@@ -10,10 +10,14 @@ Current product: competitive grocery trolley racing. See ADR 0007 and docs/one-t
 - **Gate:** ordered mandatory course trigger before the finish can qualify.
 - **Finisher:** crosses a valid finish before the deadline; points then finish tick determine placing.
 - **DNF:** no valid finish before the deadline, or disconnect grace expired. Ranked below all finishers; all-DNF has no winner.
-- **Ghost contact:** visual overlap with a rival, without physical interaction between their trolley/cargo and yours.
+- **Ram:** physical trolley contact that can disturb either load; contact itself never deducts points.
+- **Room:** private join-code session with two seats, one isolated physics world and its own race lifecycle. Rematches get new match IDs inside the room.
+- **Server:** a process hosting a bounded number of rooms; a VPS hosts that process and background services. Rooms share CPU capacity but never gameplay state.
+- **Prediction:** temporary client simulation of the interacting world; authoritative corrections replace it.
+- **Cleared racer:** finished or DNF trolley/cargo removed from live collisions; its result remains recorded.
 - **Authority:** server process that advances the only official clock and race outcomes.
 - **Replay:** versioned initial state, accepted controls, hashes and events sufficient to verify a race.
-- **Cargo Lab:** bounded post-race experiment changing specified brake controls. Never changes official results or claims a global optimum.
+- **Cargo Lab:** bounded post-race whole-world experiment changing one player’s specified brake controls while holding opponents’ recorded controls fixed. Never changes official results or claims a global optimum.
 - **Outbox:** durable records awaiting asynchronous publication; not an instruction to await I/O inside the simulation tick.
 - **Local prototype:** pre-development design experiment; not production network or determinism evidence.
 

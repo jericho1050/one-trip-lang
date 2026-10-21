@@ -1,6 +1,6 @@
 # One Trip Lang - Technical Plan
 
-Recommended baseline, October 21, 2026. No production implementation or infrastructure exists for this plan yet.
+Approved collision-racing planning baseline, October 21, 2026; ADR 0008. No production implementation or infrastructure exists for this plan yet.
 
 ## Build in this order
 
@@ -17,7 +17,7 @@ Recommended baseline, October 21, 2026. No production implementation or infrastr
 | --- | --- | --- |
 | 3D rendering | Three.js + Vite + TypeScript | Cameras, scene graph, asset loading; HTML for HUD. |
 | Physics | Pinned Rapier WASM | Collision, contacts and cargo rigid bodies. Our code handles controls, legal score transitions and race rules. |
-| Authority | Node.js + ws + schema validation | One process owns rooms and 60 Hz stepping. No home-grown WebSocket transport. |
+| Authority | Node.js + Colyseus + schema validation | Reuse rooms, seat limits, reconnect lifecycle and transport. Our room adapter owns fixed-step Rapier state and outcome messages. |
 | Persistence | SQLite per service | Transactional result deduplication and spool bookkeeping. Single writer ownership. |
 | Messaging | RabbitMQ + amqplib | At-least-once background delivery with confirms/acks and bounded retries. |
 | Verification | Vitest + Playwright | Public behavior tests and real browser flows. |
@@ -39,7 +39,7 @@ Service units are coarse: game authority, results/replay API, analysis worker. U
 
 Initialize from simulation/physics version, course version, load preset and ordered player IDs. Advance one fixed tick with ordered, quantized controls. Return authoritative snapshot and emitted facts. Snapshot/restore includes engine state, heading/control filters, elapsed tick, gates, cargo ownership/lost flags, scores, finish ticks and PRNG state if introduced.
 
-Give every grocery a stable owner and item ID. Collision masks allow environment and own cargo contacts, exclude other players. Use a simple kinematic trolley body and independent dynamic cargo; collider/render mesh separation avoids expensive triangle meshes. Precompute direction lookup values to avoid initializing gameplay with platform-dependent transcendental functions. World creation/removal order must be stable.
+Give every grocery a stable owner and item ID. Collision masks include environment, all trolleys and all cargo in the same room. Each room owns a separate Rapier world. Use a dynamic trolley chassis with a low bumper, arcade drive forces, vertical support and damped physical pitch/roll; cargo consists of independent dynamic bodies. Use sleep/wake deliberately so parked stacks do not drift and new inputs/contacts wake affected bodies; collider/render mesh separation avoids expensive triangle meshes. Use explicit versioned initialization constants and quantized controls; precompute any gameplay lookup values that would otherwise depend on platform-sensitive transcendental initialization. Capture dynamic orientation, linear/angular velocity and controller/spring state in replay snapshots. World creation/removal order must be stable.
 
 Spill is an irreversible state transition keyed by match/player/item. For simultaneous finish/ground-contact events: step physics, evaluate contacts and losses, evaluate gate/finish conditions, then rank. A deadline at tick N permits finishes strictly before N; do not use render time. Final delivery volume and boundary tolerance are versioned constants, displayed by debug tooling. A lost item never regains points, including on rematch unless the match ID changes.
 
@@ -49,9 +49,17 @@ Checkpoint acceptance requires an ordered trigger crossing or entry; finish must
 
 Protocol messages: join, resume, lobbyState, ready, start, input, inputAck, snapshot, raceEvent, result, analysisRequest, analysisState, error. Envelopes include protocol version, match ID and server tick. Input contains session/seat ownership, monotonic sequence and bounded controls. Server owns timing and maps received input to the next admissible tick; claimed client timestamps cannot backdate scoring. Clamp rate and packet size, reject stale epochs and invalid fields, and expire stuck controls when input stops.
 
-Initial snapshots 20 Hz; render interpolation for remote racers. Predict owned trolley/cargo, restore confirmed state and reapply unacknowledged controls when correcting. Store a bounded client input history. Do not rewind authoritative scores or impose full-world rollback. All player-facing provisional and confirmed states must be distinguished where prediction can disagree.
+Initial snapshots 20 Hz. Start with server snapshots/interpolation to establish correctness, then predict the small full interacting world. Restore the complete confirmed world, reapply pending local controls, and use only bounded last-known remote controls until the next snapshot. Smooth visual corrections for all bodies; do not simulate a colliding rival only as an unrelated display ghost. Store a bounded client input history. Client world restoration/replay is reconciliation; the server never rewinds finalized scores or its authoritative world. All player-facing provisional and confirmed states must be distinguished where prediction can disagree.
 
 Room code plus session-scoped reconnect token, no account database. Token cannot take over another seat. Inactive connection sets neutral controls; after initial 10-second grace player becomes DNF. The timer never pauses online. Match continues if one competitor disconnects; remaining finisher wins under ordinary ranking. Server death aborts the match explicitly. Replays/results already committed remain available.
+
+### Room ownership and lifecycle
+
+One Colyseus server process hosts a configurable bounded set of private rooms, each with two human seats and one authoritative world. A room has lobby -> countdown -> racing -> results -> rematch/dispose states. Each rematch gets a new match ID. Code is shared; mutable physics, input queues, clocks, result ledgers and reconnect epochs are room-local. Join by unlisted room code; lock at countdown, reject a third seat and cross-room token reuse. Close idle empty rooms after a bounded TTL; preserve committed replays.
+
+Start public admission at one active room. Validate two concurrent rooms in staging, measure aggregate step work/event-loop delay with analysis active, then raise the cap only to a tested count. Busy responses must not evict active races. Logical isolation does not imply CPU/failure isolation: a process crash aborts all its live rooms. No Redis, process sharding or one-pod-per-match orchestration in v1.
+
+Resolve finish or DNF, capture its immutable result, then remove that racer and cargo from live collisions. During reconnect grace, neutral controls and physical inertia continue; after expiry remove the racer. Bound stale-input duration separately from reconnect grace. Deployments stop new rooms, drain active races and restart; no automatic migration of live physics.
 
 ## Results and replay
 
@@ -61,7 +69,7 @@ Persist a unique result for (match ID, rules version). Publish persistent messag
 
 ## Cargo Lab: earned over-engineering
 
-After finishing, choose one recorded spill. Verify the original run first. Submit an immutable job keyed by replay hash, player ID, spill ID, planner version and profile-set version. Test at most 16 predefined brake-start/duration combinations around the spill, with a maximum 10-second simulation horizon and a separate 5-second wall timeout as initial targets. Re-run from a snapshot before the intervention; keep steering and other controls fixed except the named brake edit. Label the search window and changed controls in the result.
+After finishing, choose one recorded spill. Restore the entire room world and run every racer/cargo, not an isolated copy of the selected player. Rivals keep their recorded control streams but their physical trajectories may change. Show “Other players use their recorded controls; real reactions may differ.” Verify the original run first. Submit an immutable job keyed by replay hash, player ID, spill ID, planner version and profile-set version. Test at most 16 predefined brake-start/duration combinations around the spill, with a maximum 10-second simulation horizon and a separate 5-second wall timeout as initial targets. Re-run from a snapshot before the intervention; keep steering and other controls fixed except the named brake edit. Label the search window and changed controls in the result.
 
 A local avoided spill is not evidence the whole race succeeds. To claim a valid improved finish, continue the selected variant to finish/deadline under recorded remaining controls and verify it. Otherwise label only the local horizon outcome. Compare score and finish status using the same ranking rules. If no tested candidate improves the result, say so. This feature never alters the official race result.
 
@@ -69,13 +77,16 @@ Workers receive only versioned snapshots/inputs, not a live room handle. Duplica
 
 ## Deployment and budget
 
-Start with the offered VPS if its measured resources suffice. Planning hypothesis: 4 vCPU / 8 GiB for one two-player room, broker and one capped worker. This is not a benchmark or a provider purchase recommendation. Choose a nearby region only when actual hosting is available. Do not purchase or expose new infrastructure during this planning task.
+Use the offered VPS if its measured resources suffice; initial sizing hypothesis is 4 vCPU / 8 GiB with one capped worker. Paid fallback: AWS Lightsail Linux General Purpose 4 vCPU / 16 GB with public IPv4, listed at USD 84/month. This is a starting resource estimate, not measured capacity. Prefer Singapore if available and actual client latency is acceptable. See infrastructure.md for costs, access, storage, observability, deployment and teardown. No purchase is part of this documentation task.
 
 OpenTofu describes provider resources, firewall and disks; cloud-init bootstraps a pinned K3s version. For an existing provided VPS, import only resources we actually own or document the existing-host boundary. Keep provider credentials, state and kubeconfig out of Git. K3s has explicit game/worker requests and limits, readiness probes, restart policies, persistent volumes and HTTPS/WSS ingress. No public broker dashboard, database or Kubernetes API. No HA claim for one host; do not scale the game authority blindly because room ownership is stateful.
 
 Demonstrate worker scale 1 -> 2 or restart, and measure its effect on the queued analysis workload while retaining game tick budget. If two workers overload the node, keep one and report the constraint. Kubernetes adds controlled process recovery and resource placement; it is not itself a performance result. Docker Compose uses the same images for a laptop demo with bundled assets, dependencies and sample replays. Browser runtime must not require a CDN in the release build.
 
 ## Sources checked October 21, 2026
+
+- [Colyseus rooms](https://docs.colyseus.io/room) and [scalability](https://docs.colyseus.io/scalability): lifecycle/seat/reconnect facilities and a single owner per room. Pin a compatible released version and validate the adapter; do not assume framework synchronization supplies deterministic physics.
+- [Lightsail pricing](https://aws.amazon.com/lightsail/pricing/): listed Linux public-IPv4 bundle price; regional details, taxes and extras must be checked before provisioning.
 
 - [Rapier determinism](https://rapier.rs/docs/user_guides/javascript/determinism/): identical versions/initialization/order are prerequisites; engine determinism does not fix nondeterministic application logic.
 - [RabbitMQ reliability](https://www.rabbitmq.com/docs/reliability): client-side confirms, acknowledgement and recovery behavior are part of reliability; consumers must tolerate redelivery.

@@ -10,9 +10,9 @@ October 21, 2026. This records a separate design prototype, not shipped producti
 - Real rigid cargo bodies; loss on forbidden-ground contact, deducted once per item.
 - Two ordered corner gates, finish delivery-volume check, points-first/time-second ranking and DNF.
 - Local pause/focus-loss pause, reset/rematch and narrow-layout adaptation.
-- No rival collision; overlapping rivals are visually suppressed near the local cart for readability.
+- Shared-track rival trolley and cargo contacts; separate start slots, individual cameras and immediate collision-world removal on finish/DNF.
 
-Implementation: Three.js 0.160.1 and cannon-es 0.20.0 loaded from a CDN in the in-conversation preview. Kinematic trolley deck, dynamic groceries, simplified bump. This is neither a validated deterministic Rapier core nor an offline release.
+Implementation: Three.js 0.160.1 and cannon-es 0.20.0 loaded from a CDN in the in-conversation preview. Dynamic trolley chassis with guided vertical support, low bumpers, damped pitch/roll and dynamic groceries; simplified bump. This is neither a validated deterministic Rapier core nor an offline release.
 
 ## Checks actually run
 
@@ -29,6 +29,19 @@ Isolated headless system Chrome via Playwright on the development Mac; automated
 - At a 390-pixel outer viewport the preview had no horizontal overflow.
 
 Test-only hooks were added to a separate instrumented copy. The delivered preview has no test hook. These checks do not establish network behavior, production determinism, subjective fun, keyboard rollover compatibility or performance under the intended deployment load.
+
+## Collision/wobble revision evidence
+
+Approved by the user after the October 21 wobble revision. Source: separate one-trip-wobbly-race preview, not imported as competition production code. Same development Mac/headless Chrome conditions as above; no performance claim.
+
+- Repeatable side-swipe tilted cargo approximately 8 degrees versus approximately 1.5 in the overly stable version.
+- A full 45-second idle run retained 100 points for both players.
+- A scripted careful stacked-load run finished with 100 points.
+- A hard head-on fixture produced contact and spills without carts passing through each other.
+- Browser-generated simultaneous WASD/arrows triggered actual collision callbacks.
+- Finished-body clearing, one-time score loss/ownership, rematch and narrow layout checks passed.
+
+This is regression evidence for the local cannon-es prototype, not transferable Rapier tuning or cross-machine determinism evidence. Preserve these scenarios during migration. Human approval supports this direction; broader pair playtests remain open.
 
 ## Still to validate
 

@@ -12,12 +12,14 @@ Current direction: **One Trip Lang**, approved October 21, 2026. The repository 
 - [Assets and presentation](docs/one-trip-lang/assets.md)
 - [Current GitHub epic and task index](docs/one-trip-lang/tracking.md)
 - [Competitive pivot decision](docs/adr/0007-one-trip-lang-competitive-pivot.md)
+- [Collision and room architecture decision](docs/adr/0008-collision-racing-and-match-rooms.md)
+- [Infrastructure, services and cost plan](docs/one-trip-lang/infrastructure.md)
 
 ## Status and scope
 
 A local two-player split-screen design prototype exists outside this production repository. Production networking, replay verification, Cargo Lab and infrastructure are planned, not implemented. Proposal submission and selection are unconfirmed.
 
-Core: two humans, one route, physical cargo, fair start, score loss, deadline, authoritative online results and rematch. Four online players are stretch. No trolley ramming or manual packing in v1.
+Core: two humans, one route, physical cargo, ramming on a shared track, fair start, score loss, deadline, authoritative online results and rematch. Four online players are stretch. Each online player has their own camera and controls in the same match. No manual packing in v1.
 
 Development window: November 4-27; presentation November 29, 2026, Asia/Manila. Pre-development prototype eligibility remains a tracked organizer question. Solo, agent-assisted effort; dates are target gates rather than effort guarantees.
 

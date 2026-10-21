@@ -2,6 +2,8 @@
 
 Status: accepted product direction by user on October 21, 2026; technical choices are the delegated recommended baseline. Supersedes Tsinelas-specific gameplay, bots, Court, fixed stations and their never-cut list for the new product. Historical documents and issues are retained as context, not active dependencies.
 
+Update October 21: ADR 0008 supersedes the no-contact rule, kinematic handling implications, raw-ws room plumbing and isolated-player Cargo Lab assumptions below. Retained here as decision history.
+
 ## Decision
 
 Build a competitive 3D grocery trolley race. Each human owns one trolley; identical loads, 100 initial grocery points, one-time spill losses, a shared deadline and points-then-time ranking. Two-player local prototype uses WASD/arrows. Two-player online is core; four-player rooms are stretch. Player-to-player collision is disabled in the first release.
