@@ -6,10 +6,10 @@ Approved collision-racing planning baseline, October 21, 2026; ADR 0008. No prod
 
 1. Reproduce the playable handling in a headless production simulation and prove the score rules.
 2. Complete local two-player race and replay fixtures.
-3. Run the same race through a real authority with two browser clients.
+3. Run the same race through a real authority with four browser clients.
 4. Add durable results, replay verification and bounded Cargo Lab jobs.
 5. Package reproducible infrastructure, readable licensed assets and an offline kit.
-6. Measure, tune, rehearse and freeze. Four-player support follows core gates only.
+6. Measure, tune, rehearse and freeze. Four-player online acceptance is required before release freeze.
 
 ## Reuse and ownership
 
@@ -55,7 +55,7 @@ Room code plus session-scoped reconnect token, no account database. Token cannot
 
 ### Room ownership and lifecycle
 
-One Colyseus server process hosts a configurable bounded set of private rooms, each with two human seats and one authoritative world. A room has lobby -> countdown -> racing -> results -> rematch/dispose states. Each rematch gets a new match ID. Code is shared; mutable physics, input queues, clocks, result ledgers and reconnect epochs are room-local. Join by unlisted room code; lock at countdown, reject a third seat and cross-room token reuse. Close idle empty rooms after a bounded TTL; preserve committed replays.
+One Colyseus server process hosts a configurable bounded set of private rooms, each with four human seats and one authoritative world. A room has lobby -> countdown -> racing -> results -> rematch/dispose states. Each rematch gets a new match ID. Code is shared; mutable physics, input queues, clocks, result ledgers and reconnect epochs are room-local. Join by unlisted room code; lock at countdown, reject a fifth seat and cross-room token reuse. Close idle empty rooms after a bounded TTL; preserve committed replays.
 
 Start public admission at one active room. Validate two concurrent rooms in staging, measure aggregate step work/event-loop delay with analysis active, then raise the cap only to a tested count. Busy responses must not evict active races. Logical isolation does not imply CPU/failure isolation: a process crash aborts all its live rooms. No Redis, process sharding or one-pod-per-match orchestration in v1.
 
@@ -92,3 +92,5 @@ Demonstrate worker scale 1 -> 2 or restart, and measure its effect on the queued
 - [RabbitMQ reliability](https://www.rabbitmq.com/docs/reliability): client-side confirms, acknowledgement and recovery behavior are part of reliability; consumers must tolerate redelivery.
 - [K3s requirements](https://docs.k3s.io/installation/requirements): platform baseline excludes application workloads, so total host sizing requires measurement.
 - [OpenTofu overview](https://opentofu.org/docs/intro/): versioned infrastructure definitions and plan/apply workflow support reproducible resource management.
+
+Current submission scope: [ADR 0009 - Four-player baseline](../adr/0009-four-player-submission-baseline.md).

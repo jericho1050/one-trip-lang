@@ -1,6 +1,6 @@
 # Agent instructions
 
-Read CONTEXT.md, docs/one-trip-lang/PRD.md, docs/one-trip-lang/technical-plan.md and ADRs 0007-0008 before implementation. The One Trip Lang plan supersedes Tsinelas-specific requirements. Historical docs/PRD.md and ADRs 0001-0006 are retained for context. These documents describe planned production behavior, not existing production code.
+Read CONTEXT.md, docs/one-trip-lang/PRD.md, docs/one-trip-lang/technical-plan.md and ADRs 0007-0009 before implementation. ADR 0009 sets four-player online scope. Removed product plans remain recoverable in Git history. These documents describe planned production behavior, not existing production code.
 
 ## Working rules
 

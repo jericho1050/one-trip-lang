@@ -10,9 +10,9 @@ The real product goal is a short, understandable, replayable competitive browser
 
 ## Solution
 
-Two friends race the same short 3D grocery course. Each has an identical preloaded trolley. Accelerate, steer, brake and ram rivals through a bump and two corners, cross ordered gates, and reach home before the shared deadline. Deliver the most grocery points; finish time breaks a points tie.
+Four friends race the same short 3D grocery course. Each has an identical preloaded trolley. Accelerate, steer, brake and ram rivals through a bump and two corners, cross ordered gates, and reach home before the shared deadline. Deliver the most grocery points; finish time breaks a points tie.
 
-Ship two-player online rooms plus a two-player local fallback. Four online players are stretch. No shopping, inventory management, walking characters or cargo rearrangement is required for the first release.
+Ship four-player online rooms plus a two-player local fallback. No shopping, inventory management, walking characters or cargo rearrangement is required for the first release.
 
 ### Rules and defaults
 
@@ -30,7 +30,7 @@ Ship two-player online rooms plus a two-player local fallback. Four online playe
 | Bounds recovery | If the trolley leaves the legal simulation bounds, return it to its last passed gate, lose remaining cargo points and keep the clock running. No score restoration. |
 | Contact | Trolleys and groceries physically collide with rivals in the same room. Both loads are at risk; a bump alone has no score penalty. Ownership never transfers, even if cargo lands on a rival. Finished/DNF racers and all their cargo leave the active collision world immediately after outcome resolution. Separate start slots prevent initial overlap. |
 | Feel | Stacked cargo visibly rocks on side-swipes and can spill in hard crashes. A full idle round retains all cargo; a reproducible careful run retains at least 80 points. Physical pitch/roll with damped recovery is required. No glued stacks or random spill penalties. |
-| Rooms | Two human seats per private room; separate physics world, clock, scores and replay per match. One server process may host several rooms up to its tested cap. Online clients each render their own follow camera. |
+| Rooms | Four human seats per private room; separate physics world, clock, scores and replay per match. One server process may host several rooms up to its tested cap. Online clients each render their own follow camera. |
 | Controls | Local P1 WASD, P2 arrows. W/up accelerates, A/D or left/right steers, S/down brakes; holding brake at rest reverses. Online each player chooses either mapping. |
 | Pause | Local split-screen pauses both players together and auto-pauses on focus loss. Online has no player-controlled pause: the server's race clock continues. |
 | Disconnect | Neutralize stale controls; allow the same seat to reconnect for an initial 10-second grace while the race clock and physics continue. After grace the player is DNF and removed from active collisions. No bot takeover. |
@@ -48,7 +48,7 @@ The intended tradeoff is speed versus cargo preservation. Braking is legitimate 
 
 ### Never-cut scope for this product
 
-Playable 3D trolley handling; two concurrent humans; equal starting conditions; physical cargo and meaningful ramming; isolated rooms and individual POVs; understandable one-time score loss; shared deadline and correct rankings; server authority for online play; versioned replay evidence; RabbitMQ outside the tick; offline/local fallback; documented asset rights. Cargo Lab's smallest verified brake comparison and basic IaC/K3s deployment are planned engineering commitments, with gameplay completed first.
+Playable 3D trolley handling; four online humans; equal starting conditions; physical cargo and meaningful ramming; isolated rooms and individual POVs; understandable one-time score loss; shared deadline and correct rankings; server authority for online play; versioned replay evidence; RabbitMQ outside the tick; offline/local fallback; documented asset rights. Cargo Lab's smallest verified brake comparison and basic IaC/K3s deployment are planned engineering commitments, with gameplay completed first.
 
 ## User Stories
 
@@ -63,7 +63,7 @@ Playable 3D trolley handling; two concurrent humans; equal starting conditions; 
 9. As a player, I want a visible shared clock so I can judge how cautiously I can drive.
 10. As a player, I want clear corner gates and a finish marker so I know where to go.
 11. As a player, I want a readable camera and unobstructed local trolley so I can judge turns.
-12. As a player, I want the same score and winner on both screens so the competition is trustworthy.
+12. As a player, I want the same score and winner on all screens so the competition is trustworthy.
 13. As a player, I want DNF and tie rules explained so I understand the result.
 14. As a player, I want one-button rematch and readiness reset so we can try again quickly.
 15. As a disconnected player, I want a limited chance to reclaim my seat without stopping my rival's clock.
@@ -76,7 +76,7 @@ Playable 3D trolley handling; two concurrent humans; equal starting conditions; 
 22. As a maintainer, I want reproducible deployment and documented teardown so hosting is repeatable and costs are controlled.
 23. As a player, I want recognizable groceries, clear sound feedback and mute so the experience reads quickly.
 24. As a maintainer, I want licensed assets and tracked acceptance evidence so the entry is explainable and releasable.
-25. As a future group of four friends, we want a larger room using the same rules once the two-player game is stable. This story is stretch.
+25. As four friends, we want to race, collide and rematch in one private online room with individual cameras. This story is core.
 26. As a player, I want to ram a rival and risk my own cargo so overtaking involves a tactical choice.
 27. As a player, I want impacts to visibly rock the load while careful driving remains viable so the physics feels understandable.
 28. As a group, we want our private room to have its own race so another match cannot affect ours.
@@ -94,16 +94,16 @@ Playable 3D trolley handling; two concurrent humans; equal starting conditions; 
 - Cargo Lab restores the whole match, edits one player’s brake controls and resimulates all colliding bodies with rivals’ recorded controls fixed. Test at most 16 profiles under bounded simulation and wall-clock budgets. Label this assumption; a rival might react differently in real play. Live scores never change.
 - One VPS, K3s, OpenTofu for provider resources and cloud-init for host bootstrapping; Docker Compose for local/offline fallback. Basic manifests, readiness probes and limits. No service mesh, managed Kubernetes cluster or autoscaling platform.
 - Free licensed grocery/environment assets with simple collider proxies. No manual character modeling. AI-generated cosmetics are optional; no runtime AI API dependency.
-- Existing GitHub repository is retained under its historical slug; the One Trip Lang label, docs, epic and milestone prefix distinguish the new plan. Historical Tsinelas requirements do not become implementation dependencies.
+- Repository: jericho1050/one-trip-lang. The One Trip Lang label, docs, epic and milestones define the active plan; retired product plans remain only in Git history and closed issues.
 
 ### Acceptance targets, not measured results
 
-- Two humans can join, ready, complete and rematch one online race with consistent final scores.
+- Four humans can join, ready, complete and rematch one online race with consistent final scores.
 - Scripted spill, collision, cargo ownership, finished/DNF clearing, room isolation, deadline, finish-volume, ranking, duplicate-input and disconnect scenarios pass.
 - A versioned side-swipe produces visible physical cargo tilt (initial target at least 8 degrees), a hard impact spills cargo, 45 seconds of idle retains 100 points, and a careful course run retains at least 80. These are production test targets based on prototype regressions, not transferred Rapier measurements.
-- Two concurrent two-player rooms run independently; crossing room/seat tokens is rejected and disposing one room does not reset the other. Public admission initially caps at one room until multi-room load evidence supports a higher configured cap.
+- Two concurrent four-player rooms run independently; crossing room/seat tokens is rejected and disposing one room does not reset the other. Public admission initially caps at one room until multi-room load evidence supports a higher configured cap.
 - A version-pinned 10,000-tick replay fixture matches authoritative hashes in Node and supported desktop Chromium. Firefox/WebKit support follows verified compatibility, not assumptions.
-- Reference staging load of two independent two-player rooms sustains 60 Hz for 15 minutes with p95 aggregate authority step work below 16.7 ms and no growing backlog; target at least 30 FPS on named demo hardware. Profile with Cargo Lab active, record overruns/correction spikes, and keep public admission at or below measured capacity. Capture build, hardware and workload with every claim.
+- Reference staging load of two independent four-player rooms sustains 60 Hz for 15 minutes with p95 aggregate authority step work below 16.7 ms and no growing backlog; target at least 30 FPS on named demo hardware. Profile with Cargo Lab active, record overruns/correction spikes, and keep public admission at or below measured capacity. Capture build, hardware and workload with every claim.
 - At simulated 150 ms RTT and 30 ms jitter, clients converge to the same authoritative result. This is an initial test target, not a promise of invisible latency.
 - A 60-second RabbitMQ outage does not stall the live race; recovery publishes a single effective result per match. Disk exhaustion reports degraded state and prevents new matches rather than pretending persistence succeeded.
 - Cargo Lab reproduces its factual baseline before showing an alternative; corrupted/unsupported replay is rejected. Duplicate deliveries and worker restart produce one effective result per analysis key.
@@ -113,18 +113,20 @@ Playable 3D trolley handling; two concurrent humans; equal starting conditions; 
 
 Test externally visible outcomes and failure boundaries. Automate simulation/rules fixtures, input admission, replay restoration, finish ordering, outbox deduplication, worker redelivery and browser room flows. Use Vitest, Playwright and real RabbitMQ/SQLite integration fixtures. Tests should fail on wrong player-visible behavior, not implementation rearrangement.
 
-Human review covers steering feel, camera readability, whether spills are understood, and whether people want a rematch. Target three independent pairs, two runs per pair; this is an exploratory usability gate, not statistical proof of fun. Record confusion and changes. If it fails, simplify/tune before adding four-player support.
+Human review covers steering feel, camera readability, whether spills are understood, and whether people want a rematch. Target three independent pairs, two runs per pair; this is an exploratory usability gate, not statistical proof of fun. Record confusion and changes. If it fails, simplify/tune before release. Also test at least one four-person online group for collision readability and result comprehension.
 
 Existing evidence is limited to local prototype checks. There is no production server, network benchmark, deterministic Rapier migration, deployment or real two-human usability validation yet. The local browser's synthetic simultaneous-key tests do not guarantee every physical keyboard supports all held-key combinations.
 
 ## Out of Scope
 
-Core release excludes weapons, combat powers, walking avatars, manual packing, grocery recovery, procedural tracks, public matchmaking, accounts, payments, global rankings, hidden bots, bot guessing, Slipper Court, cockroach biology, chat/voice, mobile gameplay, realistic suspension, server rollback and production high availability.
+Core release excludes weapons, combat powers, walking avatars, manual packing, grocery recovery, procedural tracks, public matchmaking, accounts, payments, global rankings, hidden bots, bot guessing, chat/voice, mobile gameplay, realistic suspension, server rollback and production high availability.
 
-Four-player rooms and ordinary-client AI practice racers are stretch. No core dependency requires them. Remote LLMs cannot decide physics, score, winner or replay validity. Do not claim an analysis is globally optimal.
+Ordinary-client AI practice racers are stretch. No core dependency requires them. Remote LLMs cannot decide physics, score, winner or replay validity. Do not claim an analysis is globally optimal.
 
 ## Further Notes
 
 Event dates supplied by the user: proposal October 21; evaluation October 22-26; selection October 27; development November 4-27; live presentation November 29, 2026, Asia/Manila. Submission/selection remain unconfirmed. A refreshed One Trip Lang proposal and organizer clarification about pre-development prototypes are tracked human tasks. The user explicitly authorized this local design prototype; that does not establish competition eligibility or authorize submitting anything on their behalf.
 
-Solo with agent assistance. Milestones are outcome targets, not a capacity guarantee. No weekly-hours assumption. The new competitive product supersedes the earlier cooperative grocery and Tsinelas gameplay. Infrastructure suggestions are adopted as a minimal recommended baseline under the user's delegated decisions; the offered VPS is preferred if it passes the load gate, with a paid Lightsail fallback and estimates in the infrastructure plan. Nothing has been provisioned or purchased.
+Solo with agent assistance. Milestones are outcome targets, not a capacity guarantee. No weekly-hours assumption. The competitive grocery race is the active product. Infrastructure suggestions are adopted as a minimal recommended baseline under the user's delegated decisions; the offered VPS is preferred if it passes the load gate, with a paid Lightsail fallback and estimates in the infrastructure plan. Nothing has been provisioned or purchased.
+
+Current submission scope: [ADR 0009 - Four-player baseline](../adr/0009-four-player-submission-baseline.md).

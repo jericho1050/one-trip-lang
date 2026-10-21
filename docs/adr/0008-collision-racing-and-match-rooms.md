@@ -4,7 +4,7 @@ Status: accepted October 21, 2026. The user approved the revised wobbling/rammin
 
 ## Decision
 
-Ramming and physical cargo wobble are core gameplay. Two humans occupy separate start slots on the same course, each with their own trolley, groceries, camera and controls. Contacts may disturb both loads. Only an actual cargo-loss rule deducts points; ownership never changes. Finish/DNF removes the racer and cargo from active collisions after recording the outcome. Four-player matches remain stretch.
+Ramming and physical cargo wobble are core gameplay. Four online humans occupy separate start slots on the same course, each with their own trolley, groceries, camera and controls. Contacts may disturb both loads. Only an actual cargo-loss rule deducts points; ownership never changes. Finish/DNF removes the racer and cargo from active collisions after recording the outcome. Four-player online scope is required by ADR 0009.
 
 Use a dynamic Rapier chassis with arcade drive forces, simple vertical support and damped pitch/roll. Do not lock the deck flat or build a full vehicle simulator. Reproduce the approved local prototype's observable behavior through production tests; do not copy cannon-es coefficients and claim equivalence.
 

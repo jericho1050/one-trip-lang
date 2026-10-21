@@ -4,7 +4,7 @@ Current baseline: ADR 0008. Each leaf has one observable acceptance scenario. AF
 
 ## Epic
 
-Deliver the approved shared-track collision race, authoritative private rooms, whole-match replay, bounded Cargo Lab, licensed assets, reproducible infrastructure and offline release. Two players core, four stretch. All core evidence gates must pass; planning completion is not implementation completion.
+Deliver the approved shared-track collision race, authoritative private rooms, whole-match replay, bounded Cargo Lab, licensed assets, reproducible infrastructure and offline release. Four online players core, with a two-player local fallback. All core evidence gates must pass; planning completion is not implementation completion.
 
 ## T0: Proposal, rules and asset readiness
 
@@ -19,7 +19,7 @@ Use the official proposal headings, keep team identity placeholders where unknow
 Acceptance: Given the current PRD, the owner can review a concise official-template proposal describing competitive trolleys, cargo points, deadline, replay and background analysis, with submission status explicitly recorded.
 
 Implementation steps:
-- Replace the Tsinelas premise and demo claims.
+- Describe the approved four-player grocery race and demo.
 - Check every claimed feature is implemented or clearly planned.
 - Preserve official structure and record owner review/submission status.
 
@@ -107,15 +107,15 @@ Implementation steps:
 
 ## T2: Race a friend in an authoritative online room
 
-Milestone: OTL M2 - Two-player online race. Deliver authoritative online collision races with individual POVs, reconnects and isolated private rooms on one bounded server.
+Milestone: OTL M2 - Four-player online race. Deliver authoritative online collision races with individual POVs, reconnects and isolated private rooms on one bounded server.
 
-### S4: Join and finish a real two-browser race
+### S4: Join and finish a real four-browser race
 
 AFK | core | Due 2026-11-12 | Blocked by: S3
 
 Use Colyseus room/seat lifecycle and direct WebSocket transport with a versioned race adapter. Implement room code, ownership, ready/countdown, authoritative collision snapshots, individual online POVs and result/rematch.
 
-Acceptance: Given two independent browsers in one room, they ready, collide, spill cargo and rematch with identical authoritative loss events, deadline and ranking; a third join and a client-sent score are rejected.
+Acceptance: Given four independent browsers in one room, they ready, collide, spill cargo and rematch with identical authoritative loss events, deadline and ranking; a fifth join and a client-sent score are rejected.
 
 Implementation steps:
 - Pin Colyseus and define a validated room adapter around the shared simulation.
@@ -128,7 +128,7 @@ AFK | core | Due 2026-11-12 | Blocked by: S4
 
 Host separate Colyseus rooms with separate physics worlds, clocks, seats, input epochs and result/replay records. Add configurable admission limit, empty-room TTL and clear busy/full responses. No Redis, sharding or per-match pod controller.
 
-Acceptance: Given four browsers in two private two-seat rooms, a collision, rematch or disposal in room A cannot change room B; cross-room tokens and a third seat are rejected, and attempting an additional room at the configured cap returns busy while both active races continue.
+Acceptance: Given eight browsers in two private four-seat rooms, a collision, rematch or disposal in room A cannot change room B; cross-room tokens and a fifth seat are rejected, and attempting an additional room at the configured cap returns busy while both active races continue.
 
 Implementation steps:
 - Scope all mutable simulation/session data to the room and each rematch to a new match ID.
@@ -141,7 +141,7 @@ AFK | core | Due 2026-11-12 | Blocked by: S4
 
 Predict/reconcile the small full interacting world, including rivals and cargo, from complete authoritative snapshots. Bound remote-input extrapolation and local input history; validate size/rate, seat/room ownership, sequence and expiry. No server rollback.
 
-Acceptance: Given a head-on collision at 150 ms RTT and 30 ms jitter plus duplicate, stale and forged-seat inputs, both browsers converge on the same authoritative cargo losses and ranking, no unauthorized input changes another seat, and silence cannot leave throttle stuck.
+Acceptance: Given a head-on collision at 150 ms RTT and 30 ms jitter plus duplicate, stale and forged-seat inputs, all four browsers converge on the same authoritative cargo losses and ranking, no unauthorized input changes another seat, and silence cannot leave throttle stuck.
 
 Implementation steps:
 - Restore complete world snapshots and reapply pending local controls with bounded remote-control extrapolation.
@@ -240,7 +240,7 @@ AFK | core | Due 2026-11-23 | Blocked by: S4, S8, P2
 
 Implement docs/one-trip-lang/infrastructure.md: offered VPS or paid Lightsail fallback, OpenTofu/cloud-init, one-host K3s, HTTPS/WSS, persistent storage, restricted management, CI images and off-host backups. Account/region/DNS/credentials must be available before apply.
 
-Acceptance: Given a clean authorized host, pinned provisioning/deployment creates a working two-browser collision race and background result pipeline, and a backup restores a committed result/replay into a replacement test environment using the documented runbook.
+Acceptance: Given a clean authorized host, pinned provisioning/deployment creates a working four-browser collision race and background result pipeline, and a backup restores a committed result/replay into a replacement test environment using the documented runbook.
 
 Implementation steps:
 - Resolve host/account/region/DNS, budget alerts and provided-host versus managed-resource boundaries.
@@ -270,7 +270,7 @@ HITL | core | Due 2026-11-12 | Blocked by: S3
 
 Run short pair sessions, record confusion and rematch desire, and tune load, steering and deadline rather than adding features.
 
-Acceptance: Given three pairs playing two rounds each with control sides swapped, notes record result comprehension and rematch choice; at least two pairs understand why they won/lost and choose another run, or a concrete retest/tuning action remains open.
+Acceptance: Given three pairs playing two rounds each with control sides swapped, notes record result comprehension and rematch choice; at least two pairs understand why they won/lost and choose another run, or a concrete retest/tuning action remains open; one four-person online group also verifies collision readability and result comprehension before release.
 
 Implementation steps:
 - Observe without a narrated tutorial.
@@ -281,9 +281,9 @@ Implementation steps:
 
 AFK | core | Due 2026-11-27 | Blocked by: S5, S6, S10, S11, S13, R1
 
-Run the named-hardware two-player reference load with analysis active and network faults; test malformed input, seat isolation, deadline authority and resource bounds.
+Run the named-hardware four-player reference load with analysis active and network faults; test malformed input, seat isolation, deadline authority and resource bounds.
 
-Acceptance: Given the release candidate running two independent two-player rooms with analysis active for 15 minutes on recorded hardware, p95 aggregate authority step work stays below 16.7 ms without a growing backlog and clients reach 30 FPS, while collision/network/abuse fixtures preserve correct separate results; the public cap never exceeds measured capacity.
+Acceptance: Given the release candidate running two independent four-player rooms with analysis active for 15 minutes on recorded hardware, p95 aggregate authority step work stays below 16.7 ms without a growing backlog and clients reach 30 FPS, while collision/network/abuse fixtures preserve correct separate results; the public cap never exceeds measured capacity.
 
 Implementation steps:
 - Record build, hardware, browser, room count and worker workload.
@@ -316,9 +316,9 @@ Implementation steps:
 - Prepare concise architecture and measured evidence.
 - Tag the reviewed release and record submission status separately.
 
-## T6: Deliver the live demo and optional expansion
+## T6: Deliver the live demo
 
-Milestone: OTL M6 - Live presentation. Present the frozen two-player release. Add optional four-player support only after core evidence passes.
+Milestone: OTL M6 - Live presentation. Present the frozen four-player online release, with the two-player local fallback available.
 
 ### S18: Present the frozen entry and record the outcome
 
@@ -333,15 +333,8 @@ Implementation steps:
 - Run the rehearsed presentation.
 - Record outcome and follow-up issues without rewriting history.
 
-### X1: Stretch: expand a proven room to four humans
+## Retired duplicate task
 
-AFK | stretch | Due 2026-11-27 | Blocked by: S15, S17
+Issue #64, the former four-player stretch task, is closed as not planned because four-player support is now required directly by online task #49, room isolation #67 and release validation #60. It is not completed implementation.
 
-Only if core release gates are already met, extend room limits/HUD to four humans using identical rules and shared-track rival collisions. Re-run release evidence for any inclusion.
-
-Acceptance: Given four independent browsers, all players ready, race and rematch with matching results and the same measured performance targets; otherwise the shipped limit remains two and this optional issue stays open.
-
-Implementation steps:
-- Extend seat capacity without changing score rules.
-- Check readability and all-pairs token isolation.
-- Re-run performance and freeze a new reviewed tag only if accepted.
+Current submission scope: [ADR 0009 - Four-player baseline](../adr/0009-four-player-submission-baseline.md).

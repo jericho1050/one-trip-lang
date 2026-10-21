@@ -6,14 +6,15 @@ Planning baseline, October 21, 2026. No paid resources, domain, asset downloads 
 
 Use the offered VPS if it provides administrator access, persistent SSD storage and sufficient measured CPU/memory. Starting hypothesis: 4 vCPU / 8 GiB. Otherwise use AWS Lightsail Linux General Purpose 4 vCPU / 16 GB, preferably Singapore subject to availability and measured player latency. One host is enough for the initial architecture; capacity is earned through testing, not the number of Kubernetes pods.
 
-Public traffic: browser HTTPS/WSS -> TLS ingress -> static game frontend, Colyseus authority and results API. The authority has a separate physics world per private two-player room. It sends bounded background records to its spool writer; RabbitMQ routes persisted work to results/replay and Cargo Lab. No broker or external API sits in the input-to-physics path.
+Public traffic: browser HTTPS/WSS -> TLS ingress -> static game frontend, Colyseus authority and results API. The authority has a separate physics world per private four-player room. It sends bounded background records to its spool writer; RabbitMQ routes persisted work to results/replay and Cargo Lab. No broker or external API sits in the input-to-physics path.
 
 ```mermaid
 flowchart LR
   A[Player A browser] --> R1[Room 1: shared race]
   B[Player B browser] --> R1
-  C[Player C browser] --> R2[Room 2: separate race]
-  D[Player D browser] --> R2
+  C[Player C browser] --> R1
+  D[Player D browser] --> R1
+  E[Players E-H browsers] --> R2[Room 2: separate race]
   subgraph Authority[One game server process]
     R1
     R2
@@ -64,7 +65,7 @@ Pricing source checked October 21: [AWS Lightsail pricing](https://aws.amazon.co
 
 Initial hypotheses on the 4-vCPU host: game process request 1 CPU / 1 GiB, limit 2 CPU / 2 GiB; one analysis worker request 0.25 CPU / 512 MiB, limit 0.75 CPU / 1 GiB; broker request 0.25 CPU / 512 MiB, limit 0.5 CPU / 1 GiB; results request 0.1 CPU / 256 MiB, limit 0.25 CPU / 512 MiB. Leave host/K3s/ingress headroom. These are tuning starting points, not a reservation guarantee; CPU throttling and event-loop delay must be measured. On smaller hosts recalculate rather than copying these limits.
 
-Public room cap begins at one. In staging, run two rooms with two clients each and a busy worker; measure aggregate tick work, event-loop delay, correction spikes, memory and client FPS for at least 15 minutes. Require p95 total authority step work below 16.7 ms and no growing backlog, with spike/overrun data recorded. A slow tick does not advance the clock by skipping physics; bounded catch-up plus admission refusal prevents unbounded overload. Reduce worker concurrency/cap before adding infrastructure. Per-room isolation prevents state leakage, not shared-process failure or CPU contention.
+Public room cap begins at one. In staging, run two rooms with four clients each and a busy worker; measure aggregate tick work, event-loop delay, correction spikes, memory and client FPS for at least 15 minutes. Require p95 total authority step work below 16.7 ms and no growing backlog, with spike/overrun data recorded. A slow tick does not advance the clock by skipping physics; bounded catch-up plus admission refusal prevents unbounded overload. Reduce worker concurrency/cap before adding infrastructure. Per-room isolation prevents state leakage, not shared-process failure or CPU contention.
 
 Observe room count, rejected joins, tick durations/overruns, reconnects, snapshot sizes, queue depth/age, worker failures, disk/spool usage and persistence lag. Start with structured logs and a small protected operator view; no extra monitoring cluster is required. One-worker restart is required evidence; a two-worker run is an experiment and can be rejected if it harms races.
 

@@ -2,7 +2,7 @@
 
 A competitive 3D browser game about racing overloaded grocery trolleys home in one trip. Preserve your 100 grocery points and beat the shared deadline. Points determine the winner; time breaks a tie.
 
-Current direction: **One Trip Lang**, approved October 21, 2026. The repository retains its historical `tsinelas-arena` slug. Earlier Tsinelas documents/issues remain historical and are not the current implementation backlog.
+**Planning repository for PandesalDEV Wackathon 2026.** Four-player online collision racing is the submission scope. Production development is scheduled for November 4-27.
 
 ## Start here
 
@@ -19,8 +19,10 @@ Current direction: **One Trip Lang**, approved October 21, 2026. The repository 
 
 A local two-player split-screen design prototype exists outside this production repository. Production networking, replay verification, Cargo Lab and infrastructure are planned, not implemented. Proposal submission and selection are unconfirmed.
 
-Core: two humans, one route, physical cargo, ramming on a shared track, fair start, score loss, deadline, authoritative online results and rematch. Four online players are stretch. Each online player has their own camera and controls in the same match. No manual packing in v1.
+Core: four online humans, one route, physical cargo, ramming on a shared track, fair start, score loss, deadline, authoritative online results and rematch. Each online player has their own camera and controls in the same match. No manual packing in v1.
 
 Development window: November 4-27; presentation November 29, 2026, Asia/Manila. Pre-development prototype eligibility remains a tracked organizer question. Solo, agent-assisted effort; dates are target gates rather than effort guarantees.
 
 RabbitMQ carries background results/replay/analysis. It never sits between player input and simulation. One shared simulation supports authority, replay and Cargo Lab. Minimal K3s/IaC demonstrates repeatable deployment and isolated worker recovery, with Compose as the offline fallback.
+
+Current submission scope: [ADR 0009 - Four-player baseline](docs/adr/0009-four-player-submission-baseline.md).
