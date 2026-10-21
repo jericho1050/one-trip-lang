@@ -1,19 +1,19 @@
 # Agent instructions
 
-Read CONTEXT.md, docs/PRD.md, docs/technical-plan.md and relevant ADRs before implementation. These documents describe planned behavior, not existing code.
+Read CONTEXT.md, docs/one-trip-lang/PRD.md, docs/one-trip-lang/technical-plan.md and ADR 0007 before implementation. The One Trip Lang plan supersedes Tsinelas-specific requirements. Historical docs/PRD.md and ADRs 0001-0006 are retained for context. These documents describe planned production behavior, not existing production code.
 
 ## Working rules
 
-- Planning only before November 4, 2026 unless organizer permission is recorded in the rules issue. Do not infer permission from the availability of AI tools.
+- Competition implementation is scheduled for November 4, 2026. The user explicitly authorized separate local design prototypes on October 21; do not claim organizer approval or eligibility from that authorization. Record prework policy in the active rules issue.
 - Preserve the never-cut requirements. Defer stretch work until the core demo passes.
 - One focused issue per branch/PR. Respect declared dependencies; check their actual acceptance evidence, not just their closed status.
-- Use the shared simulation for every authoritative outcome. No duplicate physics implementation inside React components or bot code.
+- Use the shared simulation for every authoritative outcome. No duplicate physics implementation inside React components or analysis code.
 - Never block a simulation tick on RabbitMQ, a database, remote AI or HTTP. Resource limits and recovery must be explicit.
-- Bots have no privileged identity, future, seed or cockroach-brain access. Participant-visible APIs must not leak bot identities before ballots close.
-- Use available libraries for rendering, collision, storage and transport. Our custom engineering belongs in simulation rules, networking integration, planning and Court evidence.
+- The server owns race clock, item-loss transitions, finish validation and ranking. Clients submit controls, never their own outcomes. Rival trolley/cargo collisions are disabled in v1.
+- Use available libraries for rendering, collision, storage and transport. Our custom engineering belongs in simulation rules, networking integration, Cargo Lab and replay evidence.
 - Test external behavior. Require replay, determinism, networking and failure-recovery evidence; do not add tests that simply mirror presentation code.
 - Work on isolated branches. Do not merge your own changes or publish externally unless the current task authorizes it. Documentation changes and issue creation are already authorized for initial planning.
-- New dependencies need an explanation of the work they remove. Do not add Kubernetes, extra infrastructure or live LLM dependencies to the core.
+- New dependencies need an explanation of the work they remove. Minimal K3s and IaC are approved planning scope under ADR 0007. No service mesh, unbounded workers or runtime LLM dependency. Gameplay gates come first.
 - Use assets with recorded source and license. No hand-modeling requirement. Never commit API keys or downloaded assets with unknown rights.
 - Estimates are planning targets, not benchmarks. Label measured results with build/version, hardware and test conditions.
 - Do not spawn subagents by default; follow explicit user authorization for delegation.
